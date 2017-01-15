@@ -23,6 +23,7 @@ import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.params.StreamConfigurationMap;
 import android.media.MediaRecorder;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.support.annotation.NonNull;
@@ -142,6 +143,10 @@ public class Camera2VideoFragment extends Fragment
 
     };
 
+    /**
+     * Counter down timer for recording
+     */
+    private CountDownTimer countDownTimer;
 
     /**
      * The {@link android.util.Size} of camera preview.
@@ -279,6 +284,7 @@ public class Camera2VideoFragment extends Fragment
     @Override
     public void onViewCreated(final View view, Bundle savedInstanceState) {
         mTextureView = (AutoFitTextureView) view.findViewById(R.id.texture);
+        mTextView = (TextView) view.findViewById(R.id.timer);
         mButtonVideo = (Button) view.findViewById(R.id.video);
         mButtonVideo.setOnClickListener(this);
         view.findViewById(R.id.info).setOnClickListener(this);
@@ -641,6 +647,19 @@ public class Camera2VideoFragment extends Fragment
                             mButtonVideo.setText("Stop");
                             mIsRecordingVideo = true;
 
+                            //Start countdown timer
+                            countDownTimer = new CountDownTimer(30000, 1000) {
+
+                                public void onTick(long millisUntilFinished) {
+                                    mTextView.setText("Seconds: " + millisUntilFinished / 1000);
+                                }
+
+                                public void onFinish() {
+                                    mTextView.setText("done!");
+                                }
+
+                            }.start();
+
                             // Start recording
                             mMediaRecorder.start();
                         }
@@ -677,6 +696,7 @@ public class Camera2VideoFragment extends Fragment
         // Stop recording
         mMediaRecorder.stop();
         mMediaRecorder.reset();
+        countDownTimer.cancel();
         mTextView.setText("Seconds: 30");
 
         Activity activity = getActivity();
