@@ -6,6 +6,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.Fragment;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
@@ -22,10 +23,12 @@ import android.hardware.camera2.CameraMetadata;
 import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.params.StreamConfigurationMap;
 import android.media.MediaRecorder;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v13.app.FragmentCompat;
 import android.support.v4.app.ActivityCompat;
@@ -41,6 +44,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -705,8 +709,25 @@ public class Camera2VideoFragment extends Fragment
                     Toast.LENGTH_LONG).show();
             Log.d(TAG, "Video saved: " + mNextVideoAbsolutePath);
         }
+
+        File file = new File(mNextVideoAbsolutePath);
+        addVideo(file); //This is to save video to device
+
         mNextVideoAbsolutePath = null;
         startPreview();
+    }
+
+    /**
+     * Save video after stopping the recording
+     * @param videoFile
+     * @return
+     */
+    public Uri addVideo(File videoFile) {
+        ContentValues values = new ContentValues(3);
+        values.put(MediaStore.Video.Media.TITLE, "My video title");
+        values.put(MediaStore.Video.Media.MIME_TYPE, "video/mp4");
+        values.put(MediaStore.Video.Media.DATA, videoFile.getAbsolutePath());
+        return getActivity().getContentResolver().insert(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, values);
     }
 
     @Override
