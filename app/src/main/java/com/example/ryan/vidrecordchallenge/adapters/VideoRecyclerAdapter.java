@@ -1,4 +1,4 @@
-package com.example.ryan.vidrecordchallenge;
+package com.example.ryan.vidrecordchallenge.adapters;
 
 import android.content.Context;
 import android.content.Intent;
@@ -8,6 +8,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import com.example.ryan.vidrecordchallenge.R;
 
 import java.io.File;
 import java.util.Arrays;
@@ -29,7 +31,7 @@ public class VideoRecyclerAdapter extends RecyclerView.Adapter<VideoRecyclerAdap
 
     @Override
     public VideoRecyclerAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_view_file, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_item_view_file, parent, false);
         return new VideoRecyclerAdapter.ViewHolder(view);
     }
 

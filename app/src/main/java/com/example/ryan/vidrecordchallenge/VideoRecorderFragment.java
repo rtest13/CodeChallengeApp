@@ -45,6 +45,9 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.ryan.vidrecordchallenge.custom_views.AutoFitTextureView;
+import com.example.ryan.vidrecordchallenge.utils.SharedPrefHelper;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -59,7 +62,7 @@ import java.util.concurrent.TimeUnit;
  * Created by Ryan on 1/15/2017.
  */
 
-public class Camera2VideoFragment extends Fragment
+public class VideoRecorderFragment extends Fragment
         implements View.OnClickListener, FragmentCompat.OnRequestPermissionsResultCallback,
         MediaRecorder.OnInfoListener {
 
@@ -69,7 +72,7 @@ public class Camera2VideoFragment extends Fragment
     private static final SparseIntArray DEFAULT_ORIENTATIONS = new SparseIntArray();
     private static final SparseIntArray INVERSE_ORIENTATIONS = new SparseIntArray();
 
-    private static final String TAG = "Camera2VideoFragment";
+    private static final String TAG = "VideoRecorderFragment";
     private static final int REQUEST_VIDEO_PERMISSIONS = 1;
     private static final String FRAGMENT_DIALOG = "dialog";
 
@@ -163,7 +166,7 @@ public class Camera2VideoFragment extends Fragment
     /**
      * Counter down timer for recording
      */
-    private CountDownTimer countDownTimer;
+    private CountDownTimer mCountDownTimer;
 
     /**
      * The {@link android.util.Size} of camera preview.
@@ -183,7 +186,7 @@ public class Camera2VideoFragment extends Fragment
     /*
     Playback file name
      */
-    private String playbackFileName;
+    private String mPlaybackFileName;
 
     /**
      * Whether the app is recording video now
@@ -244,8 +247,8 @@ public class Camera2VideoFragment extends Fragment
     private CaptureRequest.Builder mPreviewBuilder;
     private Surface mRecorderSurface;
 
-    public static Camera2VideoFragment newInstance() {
-        return new Camera2VideoFragment();
+    public static VideoRecorderFragment newInstance() {
+        return new VideoRecorderFragment();
     }
 
     /**
@@ -300,18 +303,18 @@ public class Camera2VideoFragment extends Fragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_video_camera, container, false);
+        return inflater.inflate(R.layout.fragment_video_recorder, container, false);
     }
 
     @Override
     public void onViewCreated(final View view, Bundle savedInstanceState) {
-        mTextureView = (AutoFitTextureView) view.findViewById(R.id.texture);
-        mTextView = (TextView) view.findViewById(R.id.timer);
-        mButtonRecord = (Button) view.findViewById(R.id.video);
+        mTextureView = (AutoFitTextureView) view.findViewById(R.id.aftv_texture);
+        mTextView = (TextView) view.findViewById(R.id.tv_timer);
+        mButtonRecord = (Button) view.findViewById(R.id.btn_record);
         mButtonRecord.setOnClickListener(this);
-        mButtonPlayback = (Button) view.findViewById(R.id.playback);
+        mButtonPlayback = (Button) view.findViewById(R.id.btn_playback);
         mButtonPlayback.setOnClickListener(this);
-        mButtonVideos = (Button) view.findViewById(R.id.info);
+        mButtonVideos = (Button) view.findViewById(R.id.btn_videos);
         mButtonVideos.setOnClickListener(this);
     }
 
@@ -336,7 +339,7 @@ public class Camera2VideoFragment extends Fragment
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.video: {
+            case R.id.btn_record: {
                 if (mIsRecordingVideo) {
                     stopRecordingVideo();
                 } else {
@@ -344,14 +347,14 @@ public class Camera2VideoFragment extends Fragment
                 }
                 break;
             }
-            case R.id.info: {
+            case R.id.btn_videos: {
                 Intent myIntent = new Intent(getActivity(), VideoListActivity.class);
                 getActivity().startActivity(myIntent);
                 break;
             }
-            case R.id.playback: {
+            case R.id.btn_playback: {
                 try {
-                    File fileWithinMyDir = new File(playbackFileName);
+                    File fileWithinMyDir = new File(mPlaybackFileName);
                     fileWithinMyDir.setReadable(true, false);
                     String videoResource = fileWithinMyDir.getPath();
                     Uri intentUri = Uri.fromFile(new File(videoResource));
@@ -687,7 +690,7 @@ public class Camera2VideoFragment extends Fragment
                             mIsRecordingVideo = true;
 
                             //Start countdown timer
-                            countDownTimer = new CountDownTimer(30000, 1000) {
+                            mCountDownTimer = new CountDownTimer(30000, 1000) {
 
                                 public void onTick(long millisUntilFinished) {
                                     mTextView.setText("Seconds: " + millisUntilFinished / 1000);
@@ -735,7 +738,7 @@ public class Camera2VideoFragment extends Fragment
         // Stop recording
         mMediaRecorder.stop();
         mMediaRecorder.reset();
-        countDownTimer.cancel();
+        mCountDownTimer.cancel();
         mTextView.setText("Seconds: 30");
 
         Activity activity = getActivity();
@@ -767,7 +770,7 @@ public class Camera2VideoFragment extends Fragment
     }
 
     private void handlePlayBack() {
-        playbackFileName = mNextVideoAbsolutePath; //for playback
+        mPlaybackFileName = mNextVideoAbsolutePath; //for playback
         mButtonVideos.setVisibility(View.VISIBLE);
         mButtonPlayback.setVisibility(View.VISIBLE);
     }

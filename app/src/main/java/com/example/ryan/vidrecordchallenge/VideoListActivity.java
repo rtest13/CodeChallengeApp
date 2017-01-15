@@ -1,18 +1,16 @@
 package com.example.ryan.vidrecordchallenge;
 
-import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.widget.Toast;
 
-import java.io.File;
+import com.example.ryan.vidrecordchallenge.adapters.VideoRecyclerAdapter;
+import com.example.ryan.vidrecordchallenge.utils.SharedPrefHelper;
+
 import java.util.ArrayList;
 
-import static com.example.ryan.vidrecordchallenge.Camera2VideoFragment.LIST_OF_VIDEO_PATHS;
+import static com.example.ryan.vidrecordchallenge.VideoRecorderFragment.LIST_OF_VIDEO_PATHS;
 
 /**
  * Created by Ryan on 1/15/2017.

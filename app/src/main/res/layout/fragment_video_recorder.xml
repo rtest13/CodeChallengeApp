@@ -3,8 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.example.ryan.vidrecordchallenge.AutoFitTextureView
-        android:id="@+id/texture"
+    <com.example.ryan.vidrecordchallenge.custom_views.AutoFitTextureView
+        android:id="@+id/aftv_texture"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
@@ -16,39 +16,40 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true"
-        android:layout_below="@id/texture"
-        android:background="#4285f4"
+        android:layout_below="@id/aftv_texture"
+        android:background="@color/blue_background"
         android:layout_alignParentLeft="true">
 
-        <TextView
+        <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/timer"
             android:layout_gravity="center_vertical|left"
-            android:text="@string/_30_seconds"/>
+            android:text="@string/playback"
+            android:id="@+id/btn_playback"
+            android:visibility="gone"
+            />
 
         <Button
-            android:id="@+id/video"
+            android:id="@+id/btn_record"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:text="@string/record" />
 
         <Button
-            android:id="@+id/info"
+            android:id="@+id/btn_videos"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical|right"
             android:text="@string/videos"/>
 
-        <Button
+
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:id="@+id/tv_timer"
             android:layout_gravity="center|bottom"
-            android:text="@string/playback"
-            android:id="@+id/playback"
-            android:visibility="gone"
-            />
+            android:text="@string/_30_seconds"/>
 
     </FrameLayout>
 

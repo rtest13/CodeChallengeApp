@@ -1,4 +1,4 @@
-package com.example.ryan.vidrecordchallenge;
+package com.example.ryan.vidrecordchallenge.custom_views;
 
 import android.content.Context;
 import android.util.AttributeSet;
