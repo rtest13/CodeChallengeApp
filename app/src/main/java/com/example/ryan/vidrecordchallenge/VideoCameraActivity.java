@@ -35,9 +35,6 @@ public class VideoCameraActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        ActivityContext = this;
-//        requestPermissions(perms, CAPTURE_VIDEO_ACTIVITY_REQUEST_CODE);
-
 
         setContentView(R.layout.activity_video_camera);
         if (null == savedInstanceState) {

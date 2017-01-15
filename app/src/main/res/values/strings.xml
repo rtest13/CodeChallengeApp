@@ -3,4 +3,6 @@
     <string name="hello">hello</string>
     <string name="record">record</string>
     <string name="_30_seconds">Seconds: 30</string>
+    <string name="videos">Videos</string>
+    <string name="playback">Playback</string>
 </resources>

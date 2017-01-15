@@ -9,6 +9,7 @@ import android.app.Fragment;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Matrix;
@@ -62,6 +63,7 @@ public class Camera2VideoFragment extends Fragment
         implements View.OnClickListener, FragmentCompat.OnRequestPermissionsResultCallback,
         MediaRecorder.OnInfoListener {
 
+    public static final String LIST_OF_VIDEO_PATHS = "VIDEOPATHS";
     private static final int SENSOR_ORIENTATION_DEFAULT_DEGREES = 90;
     private static final int SENSOR_ORIENTATION_INVERSE_DEGREES = 270;
     private static final SparseIntArray DEFAULT_ORIENTATIONS = new SparseIntArray();
@@ -105,6 +107,11 @@ public class Camera2VideoFragment extends Fragment
      * Button to record video
      */
     private Button mButtonVideo;
+
+    /*
+    Button to playback video
+     */
+    private Button mButtonPlayback;
 
     /**
      * A refernce to the opened {@link android.hardware.camera2.CameraDevice}.
@@ -166,6 +173,11 @@ public class Camera2VideoFragment extends Fragment
      * MediaRecorder
      */
     private MediaRecorder mMediaRecorder;
+
+    /*
+    Playback file name
+     */
+    private String playbackFileName;
 
     /**
      * Whether the app is recording video now
@@ -291,6 +303,8 @@ public class Camera2VideoFragment extends Fragment
         mTextView = (TextView) view.findViewById(R.id.timer);
         mButtonVideo = (Button) view.findViewById(R.id.video);
         mButtonVideo.setOnClickListener(this);
+        mButtonPlayback = (Button) view.findViewById(R.id.playback);
+        mButtonPlayback.setOnClickListener(this);
         view.findViewById(R.id.info).setOnClickListener(this);
     }
 
@@ -324,14 +338,26 @@ public class Camera2VideoFragment extends Fragment
                 break;
             }
             case R.id.info: {
-                Activity activity = getActivity();
-                if (null != activity) {
-                    new AlertDialog.Builder(activity)
-                            .setMessage("hi")
-                            .setPositiveButton(android.R.string.ok, null)
-                            .show();
-                }
+                Intent myIntent = new Intent(getActivity(), VideoListActivity.class);
+                getActivity().startActivity(myIntent);
                 break;
+            }
+            case R.id.playback: {
+                try {
+                    File fileWithinMyDir = new File(playbackFileName);
+                    fileWithinMyDir.setReadable(true, false);
+                    String videoResource = fileWithinMyDir.getPath();
+                    Uri intentUri = Uri.fromFile(new File(videoResource));
+
+                    Intent intent = new Intent();
+                    intent.setAction(Intent.ACTION_VIEW);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    intent.setDataAndType(intentUri, "video/mp4");
+                    startActivity(intent);
+                } catch (Exception e) {
+                    Toast.makeText(getActivity(), "Failed to playback", Toast.LENGTH_LONG).show();
+                }
+
             }
         }
     }
@@ -614,6 +640,7 @@ public class Camera2VideoFragment extends Fragment
     }
 
     private void startRecordingVideo() {
+        mButtonPlayback.setVisibility(View.GONE);
         if (null == mCameraDevice || !mTextureView.isAvailable() || null == mPreviewSize) {
             return;
         }
@@ -713,12 +740,33 @@ public class Camera2VideoFragment extends Fragment
         File file = new File(mNextVideoAbsolutePath);
         addVideo(file); //This is to save video to device
 
+        handlePlayBack();
+        handleSharedPref(); //Store file uris to shared pref
+
+
         mNextVideoAbsolutePath = null;
         startPreview();
     }
 
+    private void handleSharedPref() {
+        // retrieve preference
+        ArrayList<String> fileList = new ArrayList<String>();
+        fileList = SharedPrefHelper.getStringArrayPref(getActivity(), LIST_OF_VIDEO_PATHS);
+
+        // store preference
+        fileList.add(mNextVideoAbsolutePath);
+        SharedPrefHelper.setStringArrayPref(getActivity(), LIST_OF_VIDEO_PATHS, fileList);
+    }
+
+    private void handlePlayBack() {
+        playbackFileName = mNextVideoAbsolutePath; //for playback
+        mButtonPlayback.setVisibility(View.VISIBLE);
+    }
+
+
     /**
      * Save video after stopping the recording
+     *
      * @param videoFile
      * @return
      */

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.TextureView;
 import android.view.View;
+import android.view.ViewGroup;
 
 /**
  * Created by Ryan on 1/15/2017.
@@ -13,6 +14,7 @@ public class AutoFitTextureView extends TextureView {
 
     private int mRatioWidth = 0;
     private int mRatioHeight = 0;
+    private boolean mWithMargin = false;
 
     public AutoFitTextureView(Context context) {
         this(context, null);
@@ -48,10 +50,22 @@ public class AutoFitTextureView extends TextureView {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         int width = View.MeasureSpec.getSize(widthMeasureSpec);
         int height = View.MeasureSpec.getSize(heightMeasureSpec);
+        int margin = (height - width) / 2;
+
+        if(!mWithMargin) {
+            mWithMargin = true;
+            ViewGroup.MarginLayoutParams margins = ViewGroup.MarginLayoutParams.class.cast(getLayoutParams());
+            margins.topMargin = -margin;
+            margins.bottomMargin = -margin;
+            margins.leftMargin = 0;
+            margins.rightMargin = 0;
+            setLayoutParams(margins);
+        }
+
         if (0 == mRatioWidth || 0 == mRatioHeight) {
             setMeasuredDimension(width, height);
         } else {
-            if (width < height * mRatioWidth / mRatioHeight) {
+            if (width < height) {
                 setMeasuredDimension(width, width * mRatioHeight / mRatioWidth);
             } else {
                 setMeasuredDimension(height * mRatioWidth / mRatioHeight, height);
